@@ -92,8 +92,8 @@ import moment from 'moment'
           location: '',
           imageUrl: '',
           description: '',
-          date: new Date(),
-          time: new Date()
+          date: new Date().toISOString,
+          time: new Date().toISOString
         }
       },
       created: function() {
