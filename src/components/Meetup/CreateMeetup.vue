@@ -32,13 +32,14 @@
                     </v-layout>
                     <v-layout row>
                         <v-flex xs12 sm6 offset-sm3>
-                            <v-text-field
-                            name="imageUrl"
-                            label="Image URL"
-                            id="image-url"
-                            v-model="imageUrl"
-                            required>
-                            </v-text-field>
+                            <v-btn 
+                            class="primary" @click="onPickFile">Upload Image</v-btn>
+                            <input 
+                            type="file" 
+                            style="display: none" 
+                            ref="fileInput" 
+                            accept="image/*"
+                            @change="onFilePicked">
                         </v-flex>
                     </v-layout>
                     <v-layout row>
@@ -93,7 +94,8 @@ import moment from 'moment'
           imageUrl: '',
           description: '',
           date: new Date().toISOString,
-          time: new Date().toISOString
+          time: new Date().toISOString,
+          image: null
         }
       },
       created: function() {
@@ -128,15 +130,37 @@ import moment from 'moment'
           if (!this.formIsValid) {
             return
           }
+          if(!this.image) {
+              return;
+          }
           const meetupData = {
             title: this.title,
             location: this.location,
-            imageUrl: this.imageUrl,
+            image : this.image,
             description: this.description,
             date: this.submitableDateTime
           }
           this.$store.dispatch('createMeetup', meetupData)
           this.$router.push('/meetups')
+        },
+        onPickFile () {
+            this.$refs.fileInput.click()
+        },
+        onFilePicked (event) {
+            const files = event.target.files
+            // single upload not multiselect image
+            let filename = files[0].name 
+            // disallowed file wihtout '.' extension ( absrubt file )
+            if (filename.lastIndexOf('.') <= 0) {
+                return alert('Please add a valid file!')
+            }
+            // FilieReader() is Vanilla Javascript feature
+            const fileReader = new FileReader()
+            fileReader.addEventListener('load', () => {
+                this.imageUrl = fileReader.result
+            })
+            fileReader.readAsDataURL(files[0])
+            this.image = files[0]
         }
       }
     }

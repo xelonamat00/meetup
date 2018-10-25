@@ -58,7 +58,8 @@ export const store = new Vuex.Store({
             title: obj[key].title,
             description: obj[key].description,
             imageUrl: obj[key].imageUrl,
-            date: obj[key].date
+            date: obj[key].date,
+            creatorId: obj[key].id
           })
         }
         commit('setLoadedMeetups', meetups)
@@ -70,19 +71,45 @@ export const store = new Vuex.Store({
       })
     },
     // create dummy
-    createMeetup ({commit}, payload) {
+    createMeetup ({commit, getters}, payload) {
       const meetup = {
         title: payload.title,
         location: payload.location,
-        imageUrl: payload.imageUrl,
         description: payload.description,
-        date: payload.date.toISOString()
+        date: payload.date.toISOString(),
+        creatorId: getters.user.id
       }
+      let imageUrl
+      let key
       firebase.database().ref('meetups').push(meetup)
       .then((data) => {
-        const key = data.key
+        key = data.key
+        return key
+      })
+      .then(key => {
+        const filename = payload.image.name
+        const ext = filename.slice(filename.lastIndexOf('.'))
+        return firebase.storage().ref('meetups/' + key + '.' + ext).put(payload.image)
+      })
+      // .then(fileData => {
+      //   reachout image url, [0] means single upload
+      //   imageUrl = fileData.metadata.downloadURLs[0]
+      //   store it into database
+      //   return firebase.database().ref('meetups').child(key).update({imageUrl: imageUrl})
+      // })
+      .then(fileData => {
+        let imagePath = fileData.metadata.fullPath
+        // creating ref to our image file and get the url
+        return firebase.storage().ref().child(imagePath).getDownloadURL()
+      })
+      .then(url => {
+        imageUrl = url
+        return firebase.database().ref('meetups').child(key).update({imageUrl: imageUrl})
+      })
+      .then(() => {
         commit('createMeetup', {
           ...meetup,
+          imageUrl: imageUrl,
           id: key
         })
       })
@@ -134,6 +161,13 @@ export const store = new Vuex.Store({
           console.log(error)
         }
       )
+    },
+    autoSignin ({commit}, payload) {
+      commit('setUser', {id: payload.uid, registeredMeetups: []})
+    },
+    logout ({commit}) {
+      firebase.auth().signOut()
+      commit('setUser', null)
     },
     clearError ({commit}) {
       commit('clearError')
