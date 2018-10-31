@@ -13,7 +13,6 @@
             <v-flex xs12>
                 <v-card>
                     <v-card-title>
-                        {{userIsCreator}}
                         <h2 class="info--text">{{meetup.title}}</h2>
                         <template v-if="userIsCreator">
                             <v-spacer></v-spacer>
@@ -27,6 +26,7 @@
                     </v-card-media>
                     <v-card-text>
                         <div class="deep-purple--text">{{ meetup.date | date}} -- {{ meetup.location }}</div>
+                        <app-edit-meetup-date-dialog :meetup="meetup" v-if="userIsCreator"></app-edit-meetup-date-dialog>
                         <div>{{ meetup.description }}
                         </div>
                     </v-card-text>

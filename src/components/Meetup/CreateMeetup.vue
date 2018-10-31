@@ -2,7 +2,7 @@
     <v-container>
         <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
-                <h3 class="primary--text">Craete New Meetup</h3>
+                <h3 class="primary--text">Create New Meetup</h3>
             </v-flex>
         </v-layout>
         <v-layout>
@@ -74,7 +74,6 @@
                             <v-btn class="primary"
                             :disabled="!formIsValid"
                             type="submit">Create Meetup</v-btn>
-                            {{ submitableDateTime }}
                         </v-flex>
                     </v-layout>
                 </form>

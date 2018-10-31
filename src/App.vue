@@ -51,9 +51,8 @@
           </v-btn>
         </v-toolbar-items>
     </v-toolbar>
-    
     <main>
-      <router-view></router-view>
+        <router-view></router-view>
     </main>
   </v-app>
 </template>
@@ -87,8 +86,13 @@ export default {
   methods: {
     onLogout () {
       this.$store.dispatch('logout')
+      this.$router.push('/')
     }
   },
   name: 'App'
 }
 </script>
+
+<style>
+
+</style>
