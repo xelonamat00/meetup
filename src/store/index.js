@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import * as firebase from 'firebase'
-import VuexPersistence from 'vuex-persist'
+// import VuexPersistence from 'vuex-persist'
 // import VuexPresistence from 'vuex-persist'
 
 Vue.use(Vuex)
 
-const vuexLocalStorage = new VuexPersistence({
-  key: 'vuex',
-  storage: window.localStorage
-})
+// const vuexLocalStorage = new VuexPersistence({
+//   key: 'vuex',
+//   storage: window.localStorage
+// })
 
 export const store = new Vuex.Store({
   state: {
@@ -33,7 +33,7 @@ export const store = new Vuex.Store({
     error: null
     // currentCreatorId: this.meetup.creatorId
   },
-  plugins: [vuexLocalStorage.plugin],
+  // plugins: [vuexLocalStorage.plugin],
   mutations: {
     setLoadedMeetups (state, payload) {
       state.loadedMeetups = payload

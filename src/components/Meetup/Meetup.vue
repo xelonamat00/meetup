@@ -27,6 +27,7 @@
                     <v-card-text>
                         <div class="deep-purple--text">{{ meetup.date | date}} -- {{ meetup.location }}</div>
                         <app-edit-meetup-date-dialog :meetup="meetup" v-if="userIsCreator"></app-edit-meetup-date-dialog>
+                        <app-edit-meetup-time-dialog :meetup="meetup" v-if="userIsCreator"></app-edit-meetup-time-dialog>
                         <div>{{ meetup.description }}
                         </div>
                     </v-card-text>
@@ -62,11 +63,11 @@
             return this.$store.getters.loading
         }
       },
-      filters: {
-          date(value){
-            const date = new Date(value)
-            return date.toLocaleDateString(['en-US'], {month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})
-          }
-      }
+    //   filters: {
+    //       date(value){
+    //         const date = new Date(value)
+    //         return date.toLocaleDateString(['en-US'], {month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})
+    //       }
+    //   }
     }
 </script>

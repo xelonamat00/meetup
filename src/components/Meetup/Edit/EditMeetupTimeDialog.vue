@@ -1,13 +1,13 @@
 <template>
     <v-dialog width="350px" v-model="editDialog">
         <v-btn  accent slot="activator">
-            Edit Date {{meetup.date}}
+            Edit Time {{meetup.date}}
         </v-btn>
         <v-card>
             <v-container>
                 <v-layout row wrap>
                     <v-flex xs12>
-                        <v-card-title>Edit Meetup Date {{ meetup.date }}</v-card-title>
+                        <v-card-title>Edit Meetup Time {{ meetup.date }}</v-card-title>
                     </v-flex>
                 </v-layout>
                 <v-divider></v-divider>
@@ -20,7 +20,7 @@
                 <v-layout>
                     <v-layout row wrap>
                         <v-flex xs12>
-                            <v-date-picker v-model="editableDate" style="width: 100%" actions>
+                            <v-time-picker v-model="editableTime" style="width: 100%" actions format="24hr">
                                 <v-btn
                                     class="blue--text darken-1"
                                     flat
@@ -29,7 +29,7 @@
                                     class="blue--text darken-1"
                                     flat
                                     @click.native="onSaveChanges">Save</v-btn>
-                            </v-date-picker>
+                            </v-time-picker>
                         </v-flex>
                     </v-layout>
                 </v-layout>
@@ -45,7 +45,7 @@ import moment from 'moment'
         data () {
             return {
                 editDialog: false,
-                editableDate: null
+                editableTime: null
             }
         },
         // created: function() {
@@ -55,14 +55,11 @@ import moment from 'moment'
         // },
         methods: {
             onSaveChanges () {
-                this.editDialog = false
                 const newDate = new Date(this.meetup.date)
-                const newDay = new Date(this.editableDate).getUTCDate()
-                const newMonth = new Date(this.editableDate).getUTCMonth()
-                const newYear = new Date(this.editableDate).getUTCFullYear()
-                newDate.setUTCDate(newDay)
-                newDate.setUTCMonth(newMonth)
-                newDate.setUTCFullYear(newYear)
+                const hours = this.editableTime.match(/^(\d+)/)[1]
+                const minutes = this.editableTime.match(/:(\d+)/)[1]
+                newDate.setHours(hours)
+                newDate.setMinutes(minutes)
                 this.$store.dispatch('updateMeetupData', {
                     id: this.meetup.id,
                     date: newDate
@@ -70,7 +67,7 @@ import moment from 'moment'
             }
         },
         created () {
-            this.editableDate = new Date(this.meetup.date).toISOString().substr(0, 10)
+            this.editableTime = new Date(this.meetup.date)
         }
     }
 </script>
