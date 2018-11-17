@@ -55,6 +55,7 @@ import moment from 'moment'
         // },
         methods: {
             onSaveChanges () {
+                this.editDialog = false
                 const newDate = new Date(this.meetup.date)
                 const hours = this.editableTime.match(/^(\d+)/)[1]
                 const minutes = this.editableTime.match(/:(\d+)/)[1]
