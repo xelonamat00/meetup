@@ -9,6 +9,7 @@ import 'vuetify/dist/vuetify.min.css'
 import {store} from './store'
 import AlerCmp from './components/Shared/Alert.vue'
 import DateFilter from './components/filters/date'
+import moment from 'moment-timezone'
 import './components/stylus/main.css'
 import EditMeetupDetailsDialog from './components/Meetup/Edit/EditMeetupDetailsDialog.vue'
 import EditMeetupDateDialog from './components/Meetup/Edit/EditMeetupDateDialog.vue'
@@ -35,6 +36,7 @@ Vue.component('app-edit-meetup-details-dialog', EditMeetupDetailsDialog)
 Vue.component('app-edit-meetup-date-dialog', EditMeetupDateDialog)
 Vue.component('app-edit-meetup-time-dialog', EditMeetupTimeDialog)
 Vue.component('app-meetup-register-dialog', RegisterMeetupDialog)
+moment.tz.setDefault('Asia/Jakarta')
 
 /* eslint-disable no-new */
 new Vue({
