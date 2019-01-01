@@ -1,11 +1,4 @@
 import * as firebase from 'firebase'
-// import VuexPersistence from 'vuex-persist'
-// import VuexPresistence from 'vuex-persist'
-
-// const vuexLocalStorage = new VuexPersistence({
-//   key: 'vuex',
-//   storage: window.localStorage
-// })
 
 export default {
   state: {
@@ -82,7 +75,8 @@ export default {
         location: payload.location,
         description: payload.description,
         date: payload.date.toISOString(),
-        creatorId: getters.user.id
+        creatorId: getters.user.id,
+        total: 0
       }
       let imageUrl
       let key

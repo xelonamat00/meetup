@@ -38,26 +38,35 @@ import * as firebase from 'firebase'
     export default{
       data () {
         return {
-          meetups: []
+        //   meetups: []
         }
       },
-      // computed: {
-      //   meetups () {
-      //     return this.$store.getters.loadedMeetups
-      //   }
-      // },
-      created () {
-        var rootRef = firebase.database().ref('meetups')
-        rootRef.once('value').then(snapshot => {
-          snapshot.forEach(entry => {
-            console.log(entry.val())
-            console.log(entry.key)
-            let tempData = entry.val()
-            tempData.id = entry.key
-            this.meetups.push(tempData)
-          })
-        })
-      }
+      created() {
+          this.$store.dispatch('totalMembers')
+      },
+      computed: {
+        meetups () {
+          return this.$store.getters.loadedMeetups
+        },
+        members () {
+            return this.$store.getters.loadMembers
+        }
+      },
+    //   created() {
+    //     this.$store.dispatch('loadMeetups')
+    //   }
+    //   created () {
+    //     var rootRef = firebase.database().ref('meetups')
+    //     rootRef.once('value').then(snapshot => {
+    //       snapshot.forEach(entry => {
+    //         console.log(entry.val())
+    //         console.log(entry.key)
+    //         let tempData = entry.val()
+    //         tempData.id = entry.key
+    //         this.meetups.push(tempData)
+    //       })
+    //     })
+    //   }
     //   filters: {
     //       date(value){
     //         const date = new Date(value)

@@ -9,8 +9,10 @@ import * as firebase from 'firebase'
 
 export default {
   state: {
-    user: null
-    // currentCreatorId: this.meetup.creatorId
+    user: null,
+    profile: {},
+    members: []
+    // count:
   },
   // plugins: [vuexLocalStorage.plugin],
   mutations: {
@@ -29,9 +31,43 @@ export default {
     },
     setUser (state, payload) {
       state.user = payload
+    },
+    totalMembers (state, payload) {
+      state.members = payload
     }
+    // incMember (state, payload){
+
+    // }
   },
   actions: {
+    // incMember ({commit}, payload) {
+    //   firebase.database().ref().child('meetup/' + payload).once('value')
+    //   .then(snapshot => {
+    //     var tempData = snapshot.val().totalMembers
+    //     snapshot.update({total: tempData++})
+    //     commit('incMember', payload)
+    //   }).catch(error => {
+    //     console.log(error)
+    //   })
+    // },
+    totalMembers ({commit}) {
+      firebase.database().ref('users').once('value')
+      .then(snapshot => {
+        const data = []
+        snapshot.forEach(childSnap => {
+          childSnap.forEach(outerChild => {
+            console.log(outerChild.val())
+            outerChild.forEach(innerChild => {
+              let smoothie = innerChild.val()
+              data.push(smoothie)
+            })
+          })
+        })
+        commit('totalMembers', data)
+      }).catch(error => {
+        console.log(error)
+      })
+    },
     registerUserForMeetup ({commit, getters}, payload) {
       commit('setLoading', true)
       const user = getters.user
@@ -40,6 +76,7 @@ export default {
       .then(data => {
         commit('setLoading', false)
         commit('registerUserForMeetup', {id: payload, fbKey: data.key})
+
       })
       .catch(error => {
         console.log(error)
@@ -78,7 +115,10 @@ export default {
           }
           commit('setUser', newUser)
         }
-      )
+      ).then(() => {
+        const currentUser = firebase.auth().currentUser
+        currentUser.updateProfile({displayName: payload.fullName})
+      })
       .catch(
         error => {
           commit('setLoading', false)
@@ -149,6 +189,9 @@ export default {
   getters: {
     user (state) {
       return state.user
+    },
+    loadMembers (state) {
+      return state.members
     }
   }
 }

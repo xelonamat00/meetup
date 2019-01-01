@@ -2,6 +2,9 @@
   <v-container>
     <v-layout justify-center>
     <v-flex xs12 sm10>
+      <!-- <button @click="tampilkanNama()">tampilkan nama</button> -->
+      <!-- {{displayName}} -->
+      <!-- {{valueData()}} -->
       <!-- {{dataRegistered}} -->
       <!-- {{data}} -->
       <!-- <ul id="example-1">
@@ -29,7 +32,7 @@
               </v-card-title>
               <v-spacer></v-spacer>
               <v-card-title class="white--text pt-5">
-                <div class="display-1 pt-5">Muhammad Faisal</div>
+                <div class="display-1 pt-5">{{displayName}}</div>
               </v-card-title>
 
             </v-layout>
@@ -54,7 +57,7 @@
                     <v-tab-item>
                       <v-list two-line>
                         <v-list-tile
-                          v-for="item in data"
+                          v-for="item in meetups"
                           :key="item.title"
                           avatar
                           @click="$router.push('meetups/' + item.id)"
@@ -73,7 +76,7 @@
                     <v-tab-item>
                       <v-list two-line>
                         <v-list-tile
-                          v-for="item in dataRegistered"
+                          v-for="item in myMeetups"
                           :key="item.title"
                           avatar
                           
@@ -112,67 +115,60 @@
 <script>
 import moment from 'moment'
 import * as firebase from 'firebase'
+import {mapActions} from 'vuex'
 
   export default {
     data () { 
       return {
-        data : [],
-        dataRegistered: [],
-        tempData: []
+        // items: [],
+        // dataRegistered: [],
+        // tempData: []
+      }
+    },
+    computed: {
+      displayName() {
+        return firebase.auth().currentUser.displayName
+      },
+      meetups() {
+        return this.$store.getters.loadedMeetupsProfile
+      },
+      myMeetups() {
+        return this.$store.getters.loadedMyMeetupsProfile
       }
     },
     created() {
-      // console.log(this.$store.getters.user.fbKeys)
-      const key = this.$store.getters.user.registeredMeetups
-      const uid = this.$store.getters.user.id
-      var rootRef = firebase.database().ref()
-      rootRef.child('meetups').once('value').then(snapshot =>{
-        key.forEach(element => {
-          let smoothie = snapshot.val()[element]
-          smoothie.id = element
-          this.data.push(smoothie)
-        })
-        snapshot.forEach(doc =>  {
-          if(snapshot.val()[doc.key].creatorId == uid) {
-            let registered = snapshot.val()[doc.key]
-            registered.id = doc.key
-            this.dataRegistered.push(registered)
-          }
-        })        
-      })
+      this.$store.dispatch('loadMeetupProfile')
+      this.$store.dispatch('loadMyMeetupProfile')
     },
+    // created() {
+    //   // console.log(this.$store.getters.user.fbKeys)
+    //   const key = this.$store.getters.user.registeredMeetups
+    //   const uid = this.$store.getters.user.id
+    //   var rootRef = firebase.database().ref()
+    //   rootRef.child('meetups').once('value').then(snapshot =>{
+    //     key.forEach(element => {
+    //       let smoothie = snapshot.val()[element]
+    //       smoothie.id = element
+    //       this.data.push(smoothie)
+    //     })
+        // snapshot.forEach(doc =>  {
+        //   if(snapshot.val()[doc.key].creatorId == uid) {
+        //     let registered = snapshot.val()[doc.key]
+        //     registered.id = doc.key
+        //     this.dataRegistered.push(registered)
+        //   }
+        // })        
+    //   })
+    // },
     methods: {
       deleteMeetup(id) {
         var result = confirm('Delete this Meetup ?')
         if(!result){
           return
         }
-        var rootRef = firebase.database().ref('users').once('value')
-        .then(snapshot => {
-          snapshot.forEach(childSnap => {
-            // console.log('childSnap: ', childSnap.val())
-            childSnap.forEach(outerChild => {
-              outerChild.forEach(innerChild => {
-                const key = innerChild.val()
-                const uid = childSnap.key
-                // console.log(childSnap.key)
-                if(key == id){
-                  firebase.database().ref('/users/' + childSnap.key + '/registrations/').child(innerChild.key)
-                  .remove()
-                }
-                console.log(innerChild.key)
-              })
-            })
-          })
-          firebase.database().ref('meetups').child(id).remove().then(() => {
-            this.dataRegistered = this.dataRegistered.filter(entry => {
-              return entry.id != id
-            })
-          })
-        }).catch(error => {
-          console.log(error)
-        })
-      }
+        this.$store.dispatch('deleteMyMeetup', id)
+        this.$store.dispatch('loadMeetups')
+      },
     },
   }
 </script>

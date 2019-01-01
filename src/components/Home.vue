@@ -2,7 +2,7 @@
     <v-container>
         <v-layout row wrap>
             <v-flex xs12 sm6 class="text-xs-center text-sm-right">
-                <!-- {{this.$store.getters.user.id}} -->
+                <v-btn class="btn--primary" @click="response()">test</v-btn>
                 <v-btn large router to="/meetups" class="info">Explore Meetups</v-btn>
             </v-flex>
             <v-flex xs12 sm6 class="text-xs-center text-sm-left">
@@ -48,33 +48,41 @@ import * as firebase from 'firebase'
       data () {
         return {
           tempData: [],
-          // meetups: []
+        //   meetups: []
         }
       },
-      created () {
-        var rootRef = firebase.database().ref('meetups')
-        rootRef.once('value').then(snapshot => {
-          snapshot.forEach(entry => {
-            console.log(entry.val())
-            console.log(entry.key)
-            let smoothie = entry.val()
-            smoothie.id = entry.key
-            this.tempData.push(smoothie)
-          })
-        })
-      },
+    //   created () {
+    //     var rootRef = firebase.database().ref('meetups')
+    //     rootRef.once('value').then(snapshot => {
+    //       snapshot.forEach(entry => {
+    //         console.log(entry.val())
+    //         console.log(entry.key)
+    //         let smoothie = entry.val()
+    //         smoothie.id = entry.key
+    //         this.tempData.push(smoothie)
+    //       })
+    //     })
+    //   },
       computed: {
         meetups () {
-          return this.tempData.slice(0, 5)
+        //   return this.tempData.slice(0, 5)
+            return this.$store.getters.featuredMeetups
         },
         loading () {
             return this.$store.getters.loading
         }
       },
       methods: {
+        response() {
+          firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                console.log(user.photoURL);
+            }
+          })
+        },
         onLoadMeetup (id) {
           this.$router.push('/meetups/' + id)
-        }
+        },
       }
     }
 </script>

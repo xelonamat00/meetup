@@ -14,6 +14,17 @@
                                 <v-layout row>
                                     <v-flex xs12>
                                         <v-text-field
+                                        name="fullName"
+                                        label="Full Name"
+                                        id="fullName"
+                                        v-model="fullName"
+                                        type="text"
+                                        required></v-text-field>
+                                    </v-flex>
+                                </v-layout>
+                                <v-layout row>
+                                    <v-flex xs12>
+                                        <v-text-field
                                         name="email"
                                         label="Email"
                                         id="email"
@@ -70,7 +81,8 @@
             return {
                 email: '',
                 password: '',
-                confirmPassword: ''
+                confirmPassword: '',
+                fullName: ''
             }
         },
         computed: {
@@ -96,7 +108,13 @@
         },
         methods: {
             onSignup () {
-                return this.$store.dispatch('signUserUp', {email: this.email, password: this.password})
+                const profile = {
+                    email: this.email,
+                    password: this.password,
+                    fullName: this.fullName
+                }
+                this.$store.dispatch('signUserUp', {email: this.email, password: this.password, fullName: this.fullName})
+                // this.$store.dispatch('createFullName', profile.fullName)
             },
             onDismissed () {
                 console.log('Dismissed Alert')
