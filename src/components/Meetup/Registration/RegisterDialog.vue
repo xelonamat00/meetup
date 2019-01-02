@@ -7,14 +7,15 @@
             <v-container>
                 <v-layout row wrap>
                     <v-flex xs12>
+                        <!-- {{meetupTotal}} -->
                         <v-card-title v-if="userIsRegistered">Unregister from meetup ?</v-card-title>
-                        <v-card-title v-else>Register from meetup ? {{meetupId}}</v-card-title>
+                        <v-card-title v-else>Register from meetup ?</v-card-title>
                     </v-flex>
                 </v-layout>
                 <v-divider></v-divider>
                 <v-layout row wrap>
                     <v-flex xs12>
-                        <v-card-text>You can always change your desicion later on</v-card-text>
+                            <v-card-text>You can always change your desicion later on</v-card-text>
                     </v-flex>
                 </v-layout>
                 <v-divider></v-divider>
@@ -41,6 +42,8 @@
 
 <script>
 import moment from 'moment'
+import * as firebase from 'firebase'
+
     export default {
         props: ['meetupId'],
         data () {
@@ -53,6 +56,9 @@ import moment from 'moment'
                 return this.$store.getters.user.registeredMeetups.findIndex(meetupId => {
                     return meetupId === this.meetupId
                 }) >= 0
+            },
+            meetup () {
+                return this.$store.getters.loadedMeetup(this.meetupId)
             }
         },
         methods: {
@@ -60,10 +66,19 @@ import moment from 'moment'
                 this.registerDialog = false
                 if (this.userIsRegistered) {
                     this.$store.dispatch('unregisterUserFromMeetup', this.meetupId)
+                    this.meetup.total -= 1
+                    firebase.database().ref('meetups/' + this.meetupId).update({total: this.meetup.total})
                 } else {
                     this.$store.dispatch('registerUserForMeetup', this.meetupId)
+                    // var updateData = {total: payload.total}
+                    // var updates = {}
+                    // updates['/meetups/' + payload.id] = updateData
+                    // this.meetupTotal += 1
+                    this.meetup.total += 1
+                    firebase.database().ref('meetups/' + this.meetupId).update({total: this.meetup.total})
                 }
-            }
+            },
+            
         }
     }
 </script>

@@ -26,9 +26,9 @@
             >
               <v-card-title>
                 <v-spacer></v-spacer>
-                <v-btn dark icon class="mr-3">
+                <!-- <v-btn dark icon class="mr-3">
                   <v-icon>edit</v-icon>
-                </v-btn>
+                </v-btn> -->
               </v-card-title>
               <v-spacer></v-spacer>
               <v-card-title class="white--text pt-5">

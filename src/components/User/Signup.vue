@@ -114,7 +114,8 @@
                     fullName: this.fullName
                 }
                 this.$store.dispatch('signUserUp', {email: this.email, password: this.password, fullName: this.fullName})
-                // this.$store.dispatch('createFullName', profile.fullName)
+                // const uid = this.$store.getters.user.id
+                // firebase.database().ref().child('users/' + uid).update({name: this.fullName})
             },
             onDismissed () {
                 console.log('Dismissed Alert')

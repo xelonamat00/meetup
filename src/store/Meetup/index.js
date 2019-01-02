@@ -57,7 +57,8 @@ export default {
             imageUrl: obj[key].imageUrl,
             date: obj[key].date,
             location: obj[key].location,
-            creatorId: obj[key].creatorId
+            creatorId: obj[key].creatorId,
+            total: obj[key].total
           })
         }
         commit('setLoadedMeetups', meetups)

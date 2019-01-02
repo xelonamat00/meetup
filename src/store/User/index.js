@@ -11,7 +11,8 @@ export default {
   state: {
     user: null,
     profile: {},
-    members: []
+    keys: [],
+    users: []
     // count:
   },
   // plugins: [vuexLocalStorage.plugin],
@@ -32,25 +33,34 @@ export default {
     setUser (state, payload) {
       state.user = payload
     },
-    totalMembers (state, payload) {
-      state.members = payload
+    registKey (state, payload) {
+      state.keys = payload
+    },
+    loadUsers (state, payload) {
+      state.users = payload
     }
-    // incMember (state, payload){
-
-    // }
   },
   actions: {
-    // incMember ({commit}, payload) {
-    //   firebase.database().ref().child('meetup/' + payload).once('value')
-    //   .then(snapshot => {
-    //     var tempData = snapshot.val().totalMembers
-    //     snapshot.update({total: tempData++})
-    //     commit('incMember', payload)
-    //   }).catch(error => {
-    //     console.log(error)
-    //   })
-    // },
-    totalMembers ({commit}) {
+    loadUsers ({commit}) {
+      firebase.database().ref('users').once('value').then(snapshot => {
+        const tempData = []
+        snapshot.forEach(childSnap => {
+          tempData.push({
+            name: childSnap.val().name,
+            email: childSnap.val().email
+          })
+          // childSnap.forEach(innerChild => {
+          //   tempData.push({
+          //     registrations: innerChild.key
+          //   })
+          // })
+        })
+        commit('loadUsers', tempData)
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    loadKeys ({commit}) {
       firebase.database().ref('users').once('value')
       .then(snapshot => {
         const data = []
@@ -58,12 +68,12 @@ export default {
           childSnap.forEach(outerChild => {
             console.log(outerChild.val())
             outerChild.forEach(innerChild => {
-              let smoothie = innerChild.val()
+              let smoothie = innerChild.key
               data.push(smoothie)
             })
           })
         })
-        commit('totalMembers', data)
+        commit('registKey', data)
       }).catch(error => {
         console.log(error)
       })
@@ -76,7 +86,6 @@ export default {
       .then(data => {
         commit('setLoading', false)
         commit('registerUserForMeetup', {id: payload, fbKey: data.key})
-
       })
       .catch(error => {
         console.log(error)
@@ -105,19 +114,19 @@ export default {
       commit('setLoading', true)
       commit('clearError')
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-      .then(
-        user => {
-          commit('setLoading', false)
-          const newUser = {
-            id: user.user.uid,
-            registeredMeetups: [],
-            fbKeys: {}
-          }
-          commit('setUser', newUser)
+      .then(user => {
+        commit('setLoading', false)
+        const newUser = {
+          id: user.user.uid,
+          registeredMeetups: [],
+          fbKeys: {}
         }
+        commit('setUser', newUser)
+      }
       ).then(() => {
         const currentUser = firebase.auth().currentUser
         currentUser.updateProfile({displayName: payload.fullName})
+        firebase.database().ref().child('users/' + currentUser.uid).update({name: payload.fullName, email: payload.email})
       })
       .catch(
         error => {
@@ -190,8 +199,11 @@ export default {
     user (state) {
       return state.user
     },
-    loadMembers (state) {
-      return state.members
+    loadKeys (state) {
+      return state.keys
+    },
+    loadUsers (state) {
+      return state.users
     }
   }
 }

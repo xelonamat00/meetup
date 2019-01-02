@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import * as firebase from 'firebase'
+
 export default {
   data () {
     return {
@@ -70,8 +72,16 @@ export default {
           {icon: 'face', title: 'Sign up', link: '/signup'},
           {icon: 'lock_open', title: 'Sign in', link: '/signin'},
       ]
-      if (this.userIsAuthenticated) {
+      if (this.userIsAuthenticated && !this.userIsAdmin) {
           menuItems = [
+          {icon: 'supervisor_account', title: 'View Meetups', link: '/meetups'},
+          {icon: 'room', title: 'Organize Meetup', link: '/meetup/new'},
+          {icon: 'person', title: 'Profile', link: '/profile'},
+          {icon: 'assignment', title: 'Report', link: '/laporan'}
+        ]
+      }
+      else if(this.userIsAuthenticated){
+        menuItems = [
           {icon: 'supervisor_account', title: 'View Meetups', link: '/meetups'},
           {icon: 'room', title: 'Organize Meetup', link: '/meetup/new'},
           {icon: 'person', title: 'Profile', link: '/profile'},
@@ -81,7 +91,10 @@ export default {
     },
     userIsAuthenticated () {
         return this.$store.getters.user !== null && this.$store.getters.user !== undefined
-      }
+      },
+    userIsAdmin () {
+        return this.$store.getters.user.id !== 'pN77ZOi24lNJ5YhiyaGesVLsPYK2'
+    }
   },
   methods: {
     onLogout () {

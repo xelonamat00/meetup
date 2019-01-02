@@ -13,11 +13,16 @@
                                 </v-card-media>
                             </v-flex>
                             <v-flex xs12 sm6 md9>
+                              <v-flex xs7>
                                 <v-card-title primary-title>
+                                  <div>
                                     <h2 class="white--text">{{ meetup.title }}</h2>
                                     <div>{{ meetup.date | date}}</div>
-                                    <div>Listen to your favorite artists and albums whenever and wherever, online and offline.</div>
+                                    <div class="mt-2">{{meetup.description}}</div>
+                                    <v-icon left light>people</v-icon>{{meetup.total}}
+                                  </div>
                                 </v-card-title>
+                              </v-flex>
                                 <v-card-actions>
                                     <v-btn flat :to="'/meetups/' + meetup.id">
                                     <v-icon left light>arrow_forward</v-icon>
@@ -50,7 +55,7 @@ import * as firebase from 'firebase'
         },
         members () {
             return this.$store.getters.loadMembers
-        }
+        },
       },
     //   created() {
     //     this.$store.dispatch('loadMeetups')
@@ -75,3 +80,9 @@ import * as firebase from 'firebase'
     //   }
     }
 </script>
+
+<style>
+  .headline{
+    font-size: 15px;
+  }
+</style>
